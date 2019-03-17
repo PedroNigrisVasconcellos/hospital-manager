@@ -1,19 +1,25 @@
 package br.codenation.hospital.manager.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+
+import java.util.List;
 
 @Getter
+@Setter
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
+@NoArgsConstructor
 public class Hospital {
-
-  private final String id;
-  private final String name;
-  private final String address;
-  private final long beds;
-  private final long availableBeds;
+    @Id
+    private String id;
+    private String nome;
+    private String endereco;
+    private long numeroLeitos;
+    private long numeroLeitosDisponiveis;
+    private List<ItemEstoque> estoque;
+    private List<Paciente> pacientesHospital;
+    private float latitude;
+    private float longitude;
 }

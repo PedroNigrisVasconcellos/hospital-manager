@@ -23,7 +23,6 @@
 
         <!-- Spring Dependency -->
         <spring.version>2.1.3.RELEASE</spring.version>
-        <spring-data-mongodb.version>2.1.5.RELEASE</spring-data-mongodb.version>
 
         <!-- General Dependencies -->
         <lombok.version>1.18.6</lombok.version>
@@ -55,21 +54,14 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-actuator</artifactId>
+            <artifactId>spring-boot-actuator-autoconfigure</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.data</groupId>-->
-            <!--<artifactId>spring-data-mongodb</artifactId>-->
-            <!--<version>${spring-data-mongodb.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.data</groupId>-->
-            <!--<artifactId>spring-data-releasetrain</artifactId>-->
-            <!--<version>Lovelace-M3</version>-->
-            <!--<type>pom</type>-->
-            <!--<scope>import</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
         <!-- General Dependencies -->
         <dependency>
@@ -124,17 +116,6 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <profiles>
 
         <!-- UnitTests -->
@@ -152,6 +133,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire.plugin.version}</version>
                         <configuration>
                             <skipTests>${skipUnitTests}</skipTests>
                             <excludes>
@@ -178,6 +160,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${failsafe.plugin.version}</version>
                         <configuration>
                             <skipITs>${skipIntegrationTests}</skipITs>
                             <includes>
@@ -215,6 +198,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>pre-unit-test</id>
@@ -283,6 +267,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>

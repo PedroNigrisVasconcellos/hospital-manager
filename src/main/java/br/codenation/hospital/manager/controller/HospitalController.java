@@ -1,9 +1,12 @@
 package br.codenation.hospital.manager.controller;
 
+import br.codenation.hospital.manager.model.Hospital;
+import br.codenation.hospital.manager.service.HospitalService;
 import br.codenation.hospital.manager.view.HospitalView;
 import br.codenation.hospital.manager.view.PatientView;
 import br.codenation.hospital.manager.view.ProductView;
 import br.codenation.hospital.manager.view.StockView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,13 +23,18 @@ import java.util.concurrent.Callable;
 @RequestMapping(value = "/v1/hospitais")
 public class HospitalController {
 
-  public HospitalController() {}
+  @Autowired private HospitalService hospitalService;
 
   @GetMapping(value = "/{hospitalId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public Callable<HospitalView> getHospitalInformation(
       @PathVariable("hospitalId") String hospitalId) {
+    Hospital hospital = hospitalService.findById(hospitalId);
     return () ->
-        new HospitalView(UUID.randomUUID().toString(), UUID.randomUUID().toString(), 10, 1);
+        new HospitalView(
+            hospital.getName(),
+            hospital.getAddress(),
+            hospital.getBeds(),
+            hospital.getAvailableBeds());
   }
 
   @GetMapping(value = "/{hospitalId}/estoque", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

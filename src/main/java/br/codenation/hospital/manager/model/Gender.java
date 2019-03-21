@@ -12,4 +12,13 @@ public enum Gender {
   FEMALE("female");
 
   private String genderName;
+
+  public static Gender fromValue(String genderName) {
+    for (Gender value : Gender.values()) {
+      if (String.valueOf(value.genderName).equals(genderName)) {
+        return value;
+      }
+    }
+    return null;
+  }
 }

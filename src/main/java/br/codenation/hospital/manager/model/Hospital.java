@@ -1,6 +1,6 @@
 package br.codenation.hospital.manager.model;
 
-import br.codenation.hospital.manager.model.product.StockItem;
+import br.codenation.hospital.manager.model.product.SupplyItem;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -11,7 +11,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -32,8 +32,8 @@ public class Hospital {
   @Min(0)
   private Long availableBeds;
 
-  private Collection<StockItem> stock;
-  private Collection<Patient> patients;
+  private Map<String, SupplyItem> stock;
+  private Map<String, Patient> patients;
 
   @NotNull private Double latitude;
   @NotNull private Double longitude;

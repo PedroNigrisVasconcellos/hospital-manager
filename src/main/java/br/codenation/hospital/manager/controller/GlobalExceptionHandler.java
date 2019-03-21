@@ -1,6 +1,7 @@
 package br.codenation.hospital.manager.controller;
 
 import br.codenation.hospital.manager.controller.model.ResponseError;
+import br.codenation.hospital.manager.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,10 +16,10 @@ public class GlobalExceptionHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  @ExceptionHandler(RuntimeException.class)
-  public ResponseError handleInternalServerError(Throwable throwable) {
-    LOGGER.error("Exception - General (500).", throwable);
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseError handleIResourceNotFoundError(Throwable throwable) {
+    LOGGER.error("Exception - ObjectNotFound (404).", throwable);
     return new ResponseError(throwable);
   }
 }

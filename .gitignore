@@ -34,3 +34,6 @@ atlassian-ide-plugin.xml
 *.ipr
 *.iws
 *.DS_Store
+
+#Git
+*.orig

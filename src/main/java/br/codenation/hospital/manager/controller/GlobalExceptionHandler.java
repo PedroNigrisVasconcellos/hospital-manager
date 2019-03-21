@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseError handleIResourceNotFoundError(Throwable throwable) {
-    LOGGER.error("Exception - ObjectNotFound (404).", throwable);
+    LOGGER.error("Exception - ResourceNotFound (404).", throwable);
     return new ResponseError(throwable);
   }
 }

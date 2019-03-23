@@ -1,6 +1,17 @@
 spring:
+  profiles: test
   data:
     mongodb:
       host: localhost
       port: 27017
-      database: hospitalmanagementdb
+      database: hospitalmanagementtestdb
+
+---
+
+spring:
+  profiles: prod
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: hospitalmanagementproddb

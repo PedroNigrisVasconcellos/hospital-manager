@@ -39,7 +39,7 @@ public class Patient {
     this.fullName = fullName;
     this.cpf = cpf;
     this.birthDate = birthDate;
-    this.gender = Gender.valueOf(gender);
+    this.gender = Gender.fromValue(gender);
     this.hospitalCheckIn = hospitalCheckIn;
     this.latitude = latitude;
     this.longitude = longitude;

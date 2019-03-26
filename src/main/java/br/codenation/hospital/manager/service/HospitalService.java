@@ -8,6 +8,8 @@ import br.codenation.hospital.manager.repository.PatientRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 @AllArgsConstructor
 public class HospitalService {
@@ -30,6 +32,42 @@ public class HospitalService {
   }
 
   public Patient save(Patient patient) {
+    return patientRepository.save(patient);
+  }
+
+  public Patient save(Patient patient, String hospitalId) {
+    Hospital hospital =
+        hospitalRepository
+            .findById(hospitalId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException(String.format(HOSPITAL_NOT_FOUND, hospitalId)));
+
+    patient.setHospitalCheckIn(LocalDate.now());
+    patientRepository.save(patient);
+
+    hospital.addNewPatient(patient);
+    hospitalRepository.save(hospital);
+
+    return patient;
+  }
+
+  public Patient save(String patientId, String hospitalId) {
+    Hospital hospital =
+        hospitalRepository
+            .findById(hospitalId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException(String.format(HOSPITAL_NOT_FOUND, hospitalId)));
+
+    Patient patient =
+        patientRepository
+            .findById(patientId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND, patientId)));
+
+    hospital.addNewPatient(patient);
+    patient.setHospitalCheckIn(LocalDate.now());
+
+    hospitalRepository.save(hospital);
     return patientRepository.save(patient);
   }
 

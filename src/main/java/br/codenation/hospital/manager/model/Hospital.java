@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -51,5 +52,15 @@ public class Hospital {
     this.availableBeds = availableBeds;
     this.latitude = latitude;
     this.longitude = longitude;
+  }
+
+  public void addNewPatient(Patient patient) {
+    if (this.patients == null) {
+      this.patients = new HashMap<>();
+    }
+
+    if (!this.patients.containsKey(patient.getId())) {
+      this.patients.put(patient.getId(), patient);
+    }
   }
 }

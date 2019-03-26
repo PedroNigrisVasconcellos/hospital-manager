@@ -23,8 +23,7 @@ public class Patient {
   @NotEmpty @NotBlank @CPF private String cpf;
   @NotNull private LocalDate birthDate;
   private Gender gender;
-  @NotNull private LocalDate hospitalCheckIn;
-
+  private LocalDate hospitalCheckIn;
   @NotNull private Double latitude;
   @NotNull private Double longitude;
 

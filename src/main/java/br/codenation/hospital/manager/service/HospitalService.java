@@ -36,11 +36,7 @@ public class HospitalService {
   }
 
   public Patient save(Patient patient, String hospitalId) {
-    Hospital hospital =
-        hospitalRepository
-            .findById(hospitalId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException(String.format(HOSPITAL_NOT_FOUND, hospitalId)));
+    Hospital hospital = loadHospital(hospitalId);
 
     patient.setHospitalCheckIn(LocalDate.now());
     patientRepository.save(patient);
@@ -52,17 +48,8 @@ public class HospitalService {
   }
 
   public Patient save(String patientId, String hospitalId) {
-    Hospital hospital =
-        hospitalRepository
-            .findById(hospitalId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException(String.format(HOSPITAL_NOT_FOUND, hospitalId)));
-
-    Patient patient =
-        patientRepository
-            .findById(patientId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND, patientId)));
+    Hospital hospital = loadHospital(hospitalId);
+    Patient patient = loadPatient(patientId);
 
     hospital.addNewPatient(patient);
     patient.setHospitalCheckIn(LocalDate.now());

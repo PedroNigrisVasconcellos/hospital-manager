@@ -55,9 +55,7 @@ public class Hospital {
   }
 
   public void addNewPatient(Patient patient) {
-    if (this.patients == null) {
-      this.patients = new HashMap<>();
-    }
+    if (this.patients == null) this.patients = new HashMap<>();
 
     if (!this.patients.containsKey(patient.getId())) {
       this.patients.put(patient.getId(), patient);

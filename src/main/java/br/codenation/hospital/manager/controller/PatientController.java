@@ -50,18 +50,18 @@ public class PatientController {
   @PostMapping(value = "/{hospitalId}/pacientes")
   public Callable<ResponseEntity<Patient>> createPatient(
       @PathVariable("hospitalId") String hospitalId, @Valid @RequestBody Patient patient) {
-    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.save(patient, hospitalId));
+    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.savePatient(patient, hospitalId));
   }
 
   @PostMapping(value = "/pacientes")
   public Callable<ResponseEntity<Patient>> createPatient(@Valid @RequestBody Patient patient) {
-    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.save(patient));
+    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.savePatient(patient));
   }
 
   @PostMapping(value = "/{hospitalId}/{patientId}")
   public Callable<ResponseEntity<Patient>> patientCheckIn(
           @PathVariable("hospitalId") String hospitalId, @PathVariable("patientId") String patientId) {
-    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.save(patientId, hospitalId));
+    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.savePatient(patientId, hospitalId));
   }
 
   //  // TODO - We have to figure out when exactly to persist patients. When a patient is in the

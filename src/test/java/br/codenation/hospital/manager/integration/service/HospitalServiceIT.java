@@ -43,7 +43,7 @@ public class HospitalServiceIT {
 
   @Test
   public void savePatient() {
-    final Patient patient = hospitalService.save(TestHelper.newPatient());
+    final Patient patient = hospitalService.savePatient(TestHelper.newPatient());
 
     assertEquals(patient, hospitalService.loadPatient(patient.getId()));
   }

@@ -33,4 +33,12 @@ public class HospitalController {
       @PathVariable("hospitalId") String hospitalId) {
     return () -> ResponseEntity.ok(hospitalService.loadHospital(hospitalId));
   }
+
+  @GetMapping(
+      value = "/{hospitalId}/getBedsAvailable",
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public Callable<ResponseEntity<Long>> getAvailableBeds(
+      @PathVariable("hospitalId") String hospitalId) {
+    return () -> ResponseEntity.ok(hospitalService.loadHospital(hospitalId).getAvailableBeds());
+  }
 }

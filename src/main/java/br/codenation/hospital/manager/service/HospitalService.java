@@ -31,11 +31,11 @@ public class HospitalService {
             () -> new ResourceNotFoundException(String.format(HOSPITAL_NOT_FOUND, hospitalId)));
   }
 
-  public Patient save(Patient patient) {
+  public Patient savePatient(Patient patient) {
     return patientRepository.save(patient);
   }
 
-  public Patient save(Patient patient, String hospitalId) {
+  public Patient savePatient(Patient patient, String hospitalId) {
     Hospital hospital = loadHospital(hospitalId);
 
     patient.setHospitalCheckIn(LocalDate.now());
@@ -47,7 +47,7 @@ public class HospitalService {
     return patient;
   }
 
-  public Patient save(String patientId, String hospitalId) {
+  public Patient savePatient(String patientId, String hospitalId) {
     Hospital hospital = loadHospital(hospitalId);
     Patient patient = loadPatient(patientId);
 

@@ -58,7 +58,7 @@ public class HospitalServiceTest {
     when(patientRepository.save(eq(patient))).thenReturn(patient);
     when(patientRepository.findById(eq(patient.getId()))).thenReturn(Optional.of(patient));
 
-    final Patient savedPatient = hospitalService.save(patient);
+    final Patient savedPatient = hospitalService.savePatient(patient);
 
     assertEquals(savedPatient, hospitalService.loadPatient(savedPatient.getId()));
   }

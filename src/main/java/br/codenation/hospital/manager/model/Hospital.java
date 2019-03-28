@@ -61,4 +61,10 @@ public class Hospital {
       this.patients.put(patient.getId(), patient);
     }
   }
+
+  public void addNewSupplyItem(SupplyItem supplyItem) {
+    if (this.stock == null) this.stock = new HashMap<>();
+
+    this.stock.put(supplyItem.getName().toUpperCase(), supplyItem);
+  }
 }

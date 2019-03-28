@@ -3,6 +3,7 @@ package br.codenation.hospital.manager.service;
 import br.codenation.hospital.manager.exception.ResourceNotFoundException;
 import br.codenation.hospital.manager.model.Hospital;
 import br.codenation.hospital.manager.model.Patient;
+import br.codenation.hospital.manager.model.product.SupplyItem;
 import br.codenation.hospital.manager.repository.HospitalRepository;
 import br.codenation.hospital.manager.repository.PatientRepository;
 import lombok.AllArgsConstructor;
@@ -63,5 +64,13 @@ public class HospitalService {
         .findById(patientId)
         .orElseThrow(
             () -> new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND, patientId)));
+  }
+
+  public SupplyItem saveSupplyItem(SupplyItem supplyItem, String hospitalId) {
+    Hospital hospital = loadHospital(hospitalId);
+    hospital.addNewSupplyItem(supplyItem);
+    hospitalRepository.save(hospital);
+
+    return hospital.getStock().get(supplyItem.getName().toUpperCase());
   }
 }

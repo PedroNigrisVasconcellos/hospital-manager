@@ -2,7 +2,6 @@ package br.codenation.hospital.manager.service;
 
 import br.codenation.hospital.manager.exception.ResourceNotFoundException;
 import br.codenation.hospital.manager.model.Hospital;
-import br.codenation.hospital.manager.model.Patient;
 import br.codenation.hospital.manager.repository.HospitalRepository;
 import br.codenation.hospital.manager.repository.PatientRepository;
 import helper.TestHelper;
@@ -19,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 public class HospitalServiceTest {
@@ -51,24 +51,9 @@ public class HospitalServiceTest {
   }
 
   @Test
-  public void savePatient() {
+  public void shouldCheckinPatientWithPatientObject(){
 
-    final Patient patient = TestHelper.newPatient();
-
-    when(patientRepository.save(eq(patient))).thenReturn(patient);
-    when(patientRepository.findById(eq(patient.getId()))).thenReturn(Optional.of(patient));
-
-    final Patient savedPatient = hospitalService.save(patient);
-
-    assertEquals(savedPatient, hospitalService.loadPatient(savedPatient.getId()));
+    //TODO
   }
 
-  @Test
-  public void patientNotFound() {
-
-    when(patientRepository.findById(anyString())).thenReturn(Optional.empty());
-
-    assertThrows(
-        ResourceNotFoundException.class, () -> hospitalService.loadPatient("some random value"));
-  }
 }

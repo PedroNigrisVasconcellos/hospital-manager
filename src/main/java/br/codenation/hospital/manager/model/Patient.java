@@ -14,8 +14,8 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "pacients")
-@TypeAlias("pacient")
+@Document(collection = "patients")
+@TypeAlias("patient")
 public class Patient {
   @Id private String id;
 

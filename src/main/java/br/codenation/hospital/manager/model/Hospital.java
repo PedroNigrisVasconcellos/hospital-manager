@@ -1,5 +1,6 @@
 package br.codenation.hospital.manager.model;
 
+import br.codenation.hospital.manager.exception.HospitalException;
 import br.codenation.hospital.manager.model.product.SupplyItem;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,11 +56,18 @@ public class Hospital {
     this.longitude = longitude;
   }
 
-  public void addNewPatient(Patient patient) {
+  public Patient addNewPatient(Patient patient) {
+
     if (this.patients == null) this.patients = new HashMap<>();
 
     if (!this.patients.containsKey(patient.getId())) {
       this.patients.put(patient.getId(), patient);
-    }
+      return patient;
+    }else
+      return null;
+  }
+
+  public boolean patientsMapIsNullOrEmpty() {
+    return this.patients == null || this.patients.isEmpty();
   }
 }

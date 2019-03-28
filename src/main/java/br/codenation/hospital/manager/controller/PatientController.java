@@ -2,6 +2,7 @@ package br.codenation.hospital.manager.controller;
 
 import br.codenation.hospital.manager.model.Patient;
 import br.codenation.hospital.manager.service.HospitalService;
+import br.codenation.hospital.manager.service.PatientService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class PatientController {
 
   private final HospitalService hospitalService;
+  private final PatientService patientService;
 
   @GetMapping(value = "/{hospitalId}/pacientes", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public Callable<ResponseEntity<List<String>>> getHospitalPatientsName(
@@ -50,18 +52,18 @@ public class PatientController {
   @PostMapping(value = "/{hospitalId}/pacientes")
   public Callable<ResponseEntity<Patient>> createPatient(
       @PathVariable("hospitalId") String hospitalId, @Valid @RequestBody Patient patient) {
-    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.save(patient, hospitalId));
+    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.checkinPatient(patient, hospitalId));
   }
 
   @PostMapping(value = "/pacientes")
   public Callable<ResponseEntity<Patient>> createPatient(@Valid @RequestBody Patient patient) {
-    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.save(patient));
+    return () -> ResponseEntity.status(HttpStatus.CREATED).body(patientService.save(patient));
   }
 
   @PostMapping(value = "/{hospitalId}/{patientId}")
   public Callable<ResponseEntity<Patient>> patientCheckIn(
           @PathVariable("hospitalId") String hospitalId, @PathVariable("patientId") String patientId) {
-    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.save(patientId, hospitalId));
+    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.checkinPatient(patientId, hospitalId));
   }
 
   //  // TODO - We have to figure out when exactly to persist patients. When a patient is in the

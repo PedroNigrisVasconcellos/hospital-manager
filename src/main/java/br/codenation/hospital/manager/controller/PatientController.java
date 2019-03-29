@@ -1,5 +1,6 @@
 package br.codenation.hospital.manager.controller;
 
+import br.codenation.hospital.manager.dto.PatientDTO;
 import br.codenation.hospital.manager.model.Patient;
 import br.codenation.hospital.manager.service.HospitalService;
 import br.codenation.hospital.manager.service.PatientService;
@@ -33,20 +34,18 @@ public class PatientController {
       @PathVariable("hospitalId") String hospitalId) {
     return () ->
         ResponseEntity.ok(
-            hospitalService.loadHospital(hospitalId).getPatients().values().stream()
-                .map(Patient::getFullName)
-                .collect(Collectors.toList()));
+                hospitalService.findPatients(hospitalId).stream().
+                        map(Patient::getFullName).
+                        collect(Collectors.toList()));
   }
 
-  @GetMapping(
-      value = "/{hospitalId}/pacientes/{patientId}",
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public Callable<ResponseEntity<Patient>> getPatient(
+  @GetMapping(value = "/{hospitalId}/pacientes/{patientId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public Callable<ResponseEntity<PatientDTO>> getPatient(
       @PathVariable("hospitalId") String hospitalId, @PathVariable("patientId") String patientId) {
     return () ->
         ResponseEntity.of(
-            Optional.ofNullable(
-                hospitalService.loadHospital(hospitalId).getPatients().get(patientId)));
+                Optional.ofNullable(
+                        new PatientDTO(hospitalService.findPatient(patientId,hospitalId))));
   }
 
   @PostMapping(value = "/{hospitalId}/pacientes")
@@ -60,17 +59,23 @@ public class PatientController {
     return () -> ResponseEntity.status(HttpStatus.CREATED).body(patientService.save(patient));
   }
 
-  @PostMapping(value = "/{hospitalId}/{patientId}")
-  public Callable<ResponseEntity<Patient>> patientCheckIn(
-          @PathVariable("hospitalId") String hospitalId, @PathVariable("patientId") String patientId) {
-    return () -> ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.checkinPatient(patientId, hospitalId));
+  @GetMapping(value = "/pacientes", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public Callable<ResponseEntity<List<Patient>>> findAllPatientsDB() {
+    return () -> ResponseEntity.of(
+            Optional.ofNullable(
+                    patientService.loadAllPatients()));
   }
 
-  //  // TODO - We have to figure out when exactly to persist patients. When a patient is in the
-  //  // TODO - hospital it means it has checked-in
-  //  // TODO - Should we only save when the patient checks in?
-  //  @PostMapping(value = "/v1/pacientes")
-  //  public Callable<ResponseEntity<Patient>> createPatient(@Valid @RequestBody Patient patient) {
-  //    return () -> ResponseEntity.of(hospitalService.save(patient));
-  //  }
+  @PostMapping(value = "/{hospitalId}/checkin/{patientId}")
+  public Callable<ResponseEntity<Patient>> patientCheckIn(
+          @PathVariable("hospitalId") String hospitalId, @PathVariable("patientId") String patientId) {
+    return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkinPatient(patientService.loadPatient(patientId), hospitalId));
+  }
+
+  @PostMapping(value = "/{hospitalId}/checkout/{patientId}")
+  public Callable<ResponseEntity<Patient>> patientCheckOut(
+          @PathVariable("hospitalId") String hospitalId, @PathVariable("patientId") String patientId) {
+    return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkoutPatient(patientId, hospitalId));
+  }
+
 }

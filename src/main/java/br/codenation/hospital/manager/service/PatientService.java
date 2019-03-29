@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,6 +28,10 @@ public class PatientService {
                 .findById(patientId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND, patientId)));
+    }
+
+    public List<Patient> loadAllPatients(){
+        return patientRepository.findAll();
     }
 
     public Patient update(Patient patientUpdated){

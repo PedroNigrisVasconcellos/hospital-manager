@@ -1,5 +1,6 @@
 package br.codenation.hospital.manager.controller;
 
+import br.codenation.hospital.manager.dto.SupplyItemDTO;
 import br.codenation.hospital.manager.model.product.SupplyItem;
 import br.codenation.hospital.manager.service.HospitalService;
 import lombok.AllArgsConstructor;
@@ -44,11 +45,9 @@ public class ProductController {
   @GetMapping(
       value = "/{hospitalId}/estoque/{productId}",
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public Callable<ResponseEntity<SupplyItem>> getProduct(
+  public Callable<ResponseEntity<SupplyItemDTO>> getItem(
       @PathVariable("hospitalId") String hospitalId, @PathVariable("productId") String productId) {
     return () ->
-        ResponseEntity.of(
-            Optional.ofNullable(
-                hospitalService.loadHospital(hospitalId).getStock().get(productId)));
+        ResponseEntity.ok(new SupplyItemDTO(hospitalService.findProduct(hospitalId,productId)));
   }
 }

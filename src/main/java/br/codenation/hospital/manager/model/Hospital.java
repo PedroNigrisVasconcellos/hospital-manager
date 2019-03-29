@@ -86,8 +86,20 @@ public class Hospital {
     }
   }
 
-  public void addItensStock(List<SupplyItem> itens){
-      itens.forEach(item -> addItemStock(item));
+  public boolean incAvailableBeds(){
+    if(this.availableBeds < this.beds) {
+      this.availableBeds++;
+      return true;
+    }else
+      return false;
+  }
+
+  public boolean decAvailableBeds(){
+    if(this.availableBeds > 0) {
+      this.availableBeds--;
+      return true;
+    }else
+      return false;
   }
 
   public boolean patientsMapIsNullOrEmpty() {

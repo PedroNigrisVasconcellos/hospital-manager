@@ -24,6 +24,8 @@ public class HospitalService {
   private static final String NO_PATIENTS_HAS_BEEN_FOUND = "No patients has been found";
   private static final String PATIENT_ALREADY_CHECKED_IN = "Patient %s already checked in";
   private static final String PATIENT_IS_NOT_CHECKED_IN = "Patient %s is not checked in";
+  private static final String NO_AVAILABLE_BEDS = "No available beds in the hospital %s";
+  private static final String INVALID_NUMBER_OF_BEDS = "Invalid number of beds";
 
   @Autowired
   private final HospitalRepository hospitalRepository;
@@ -48,13 +50,15 @@ public class HospitalService {
   public Patient checkinPatient(Patient patient, String hospitalId) {
     Hospital hospital = loadHospital(hospitalId);
 
+    if(!hospital.decAvailableBeds()) throw new HospitalException(String.format(NO_AVAILABLE_BEDS,hospitalId));
+
     patient.setHospitalCheckIn(LocalDate.now());
 
     patientService.update(patient);
 
     if(hospital.addNewPatient(patient) == null) throw new HospitalException(PATIENT_ALREADY_CHECKED_IN);
 
-    updatePatientsList(hospital);
+    save(hospital);
 
     return patient;
   }
@@ -62,12 +66,14 @@ public class HospitalService {
   public Patient checkoutPatient(String patientId, String hospitalId) {
     Hospital hospital = loadHospital(hospitalId);
 
+    if(!hospital.incAvailableBeds()) throw new HospitalException(String.format(INVALID_NUMBER_OF_BEDS));
+
     Patient patient = hospital.removePatient(patientId);
     if(patient == null) throw new HospitalException(String.format(PATIENT_IS_NOT_CHECKED_IN,patientId));
 
     patient.setHospitalCheckIn(null);
     patientService.update(patient);
-    updatePatientsList(hospital);
+    save(hospital);
 
     return patient;
   }
@@ -91,6 +97,16 @@ public class HospitalService {
     return new ArrayList<>(hospital.getPatients().values());
   }
 
+  public SupplyItem insertProduct(String hospitalId, SupplyItem product){
+    Hospital hospital = loadHospital(hospitalId);
+
+    hospital.addItemStock(product);
+
+    save(hospital);
+
+    return product;
+  }
+
   public SupplyItem findProduct(String hospitalId ,String productId){
       Hospital hospital = loadHospital(hospitalId);
 
@@ -100,20 +116,6 @@ public class HospitalService {
         return supplyItem;
       else
         throw new ResourceNotFoundException(String.format(PRODUCT_NOT_FOUND,productId));
-
-  }
-
-  public Hospital updatePatientsList(Hospital hospitalUpdated){
-
-    Optional<Hospital> hospital = hospitalRepository.findById(hospitalUpdated.getId());
-
-    if(hospital.isPresent()){
-      Hospital updated = hospital.get();
-      updated.setPatients(hospitalUpdated.getPatients());
-      save(updated);
-      return updated;
-    }else
-      throw new ResourceNotFoundException(String.format(HOSPITAL_NOT_FOUND,hospitalUpdated.getId()));
 
   }
 

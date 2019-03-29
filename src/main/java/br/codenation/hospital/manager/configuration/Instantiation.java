@@ -13,6 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ public class Instantiation implements CommandLineRunner {
             "Hospital Samaritano",
             "R. Conselheiro Brotero, 1486",
             1000L,
-            600L,
+            1L,
             -23.5392135,
             -46.66193084);
 
@@ -88,11 +89,15 @@ public class Instantiation implements CommandLineRunner {
       SupplyItem sangueOPos =
               new SupplyItem("5","Sangue O Positivo",Long.valueOf(25), SupplyType.BLOOD_BANK);
 
-    samaritanHospital.addItensStock(Arrays.asList(seringa,gesso,gaze,sangueAB));
-    morumbiHospital.addItemStock(sangueOPos);
-
     patientRepository.saveAll(Arrays.asList(paciente1,paciente2,paciente3));
     hospitalRepository.saveAll(Arrays.asList(samaritanHospital, morumbiHospital));
+
+    hospitalService.insertProduct(samaritanHospital.getId(),seringa);
+    hospitalService.insertProduct(samaritanHospital.getId(),seringa);
+    hospitalService.insertProduct(samaritanHospital.getId(),seringa);
+    hospitalService.insertProduct(samaritanHospital.getId(),seringa);
+
+    hospitalService.insertProduct(morumbiHospital.getId(),sangueAB);
 
     hospitalService.checkinPatient(patientService.loadPatient(paciente1.getId()),samaritanHospital.getId());
 

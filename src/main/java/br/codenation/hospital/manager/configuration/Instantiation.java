@@ -37,8 +37,8 @@ public class Instantiation implements CommandLineRunner {
         new Hospital(
             "Hospital Samaritano",
             "R. Conselheiro Brotero, 1486",
-            1000L,
-            1L,
+            10L,
+            10L,
             -23.5392135,
             -46.66193084);
 
@@ -46,8 +46,8 @@ public class Instantiation implements CommandLineRunner {
         new Hospital(
             "Hospital São Luiz Unidade Morumbi",
             "Rua Engenheiro Oscar Americano, 840 - Jardim Guedala, São Paulo - SP, 05605-050",
-            10057L,
-            785L,
+            5L,
+            5L,
             -23.59067495,
             -46.67325182);
 

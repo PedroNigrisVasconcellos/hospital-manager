@@ -8,12 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -66,13 +61,13 @@ public class PatientController {
                     patientService.loadAllPatients()));
   }
 
-  @PostMapping(value = "/{hospitalId}/checkin/{patientId}")
+  @PutMapping(value = "/{hospitalId}/checkin/{patientId}")
   public Callable<ResponseEntity<Patient>> patientCheckIn(
           @PathVariable("hospitalId") String hospitalId, @PathVariable("patientId") String patientId) {
     return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkinPatient(patientService.loadPatient(patientId), hospitalId));
   }
 
-  @PostMapping(value = "/{hospitalId}/checkout/{patientId}")
+  @PutMapping(value = "/{hospitalId}/checkout/{patientId}")
   public Callable<ResponseEntity<Patient>> patientCheckOut(
           @PathVariable("hospitalId") String hospitalId, @PathVariable("patientId") String patientId) {
     return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkoutPatient(patientId, hospitalId));

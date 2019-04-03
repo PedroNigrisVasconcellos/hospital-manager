@@ -29,7 +29,7 @@ public class PatientController {
       @PathVariable("hospitalId") String hospitalId) {
     return () ->
         ResponseEntity.ok(
-                hospitalService.findPatients(hospitalId).stream().
+                hospitalService.findPatients(hospitalId).values().stream().
                         map(Patient::getFullName).
                         collect(Collectors.toList()));
   }
@@ -57,20 +57,23 @@ public class PatientController {
   @GetMapping(value = "/pacientes", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public Callable<ResponseEntity<List<Patient>>> findAllPatientsDB() {
     return () -> ResponseEntity.of(
-            Optional.ofNullable(
-                    patientService.loadAllPatients()));
+            Optional.ofNullable(patientService.loadAllPatients()));
   }
 
   @PutMapping(value = "/{hospitalId}/checkin/{patientId}")
   public Callable<ResponseEntity<Patient>> patientCheckIn(
           @PathVariable("hospitalId") String hospitalId, @PathVariable("patientId") String patientId) {
+
     return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkinPatient(patientService.loadPatient(patientId), hospitalId));
+
   }
+  //TODO In the case where the patient is already checked-in, the Http status returns 500 (internal server error). It shouldn't return 304 (Not Modified)? How to do this, being that it throw an exception instead?
 
   @PutMapping(value = "/{hospitalId}/checkout/{patientId}")
   public Callable<ResponseEntity<Patient>> patientCheckOut(
           @PathVariable("hospitalId") String hospitalId, @PathVariable("patientId") String patientId) {
+
     return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkoutPatient(patientId, hospitalId));
   }
-
+  //TODO Same of patientCheckin().
 }

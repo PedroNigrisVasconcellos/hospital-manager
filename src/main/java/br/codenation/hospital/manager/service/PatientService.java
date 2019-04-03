@@ -34,16 +34,20 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    public Patient update(Patient patientUpdated){
+    public void update(Patient patientUpdated){
         Optional<Patient> patient = patientRepository.findById(patientUpdated.getId());
 
-        if(patient.isPresent()){
-            Patient updated = patient.get();
+        patient.ifPresentOrElse(updated -> {
             updated.setHospitalCheckIn(patientUpdated.getHospitalCheckIn());
-            patientRepository.save(updated);
-            return updated;
-        }else
-            throw new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND,patientUpdated.getId()));
+            patientRepository.save(updated); },
+                () -> new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND,patientUpdated.getId())));
+
+//        if(patient.isPresent()){
+//            Patient updated = patient.get();
+//
+//            return updated;
+//        }else
+//            throw new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND,patientUpdated.getId()));
 
     }
 

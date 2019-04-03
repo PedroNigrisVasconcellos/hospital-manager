@@ -1,7 +1,9 @@
 package br.codenation.hospital.manager.model.product;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.Min;
@@ -13,8 +15,9 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class SupplyItem {
 
-  @NotNull @NotBlank protected String id;
-  @NotEmpty @NotBlank protected String name;
+  @NotNull @NotBlank private String id;
+
+  @NotEmpty @NotBlank private String name;
 
   @NotNull
   @Min(0)
@@ -27,10 +30,6 @@ public class SupplyItem {
       this.name = name;
       this.quantity = quantity;
       this.supplyType = supplyType;
-  }
-
-  public void addItens(Long quantity){
-      this.quantity += quantity;
   }
 
 }

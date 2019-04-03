@@ -13,10 +13,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -62,47 +59,44 @@ public class Hospital {
 
   public Patient addNewPatient(Patient patient) {
 
-    if (!this.patients.containsKey(patient.getId())) {
-      this.patients.put(patient.getId(), patient);
-      return patient;
-    }else
+    if (patients.containsKey(patient.getId()))
       return null;
+
+    patients.put(patient.getId(), patient);
+    return patient;
   }
 
-  public Patient removePatient(String patientId){
-    return this.patients.remove(patientId);
+  public Optional<Patient> removePatient(String patientId){
+    return Optional.of(patients.remove(patientId));
   }
 
   public SupplyItem addItemStock(SupplyItem supplyItem){
 
-    if(!this.stock.containsKey(supplyItem.getId())) {
-      this.stock.put(supplyItem.getId(), supplyItem);
-      return supplyItem;
+    if (stock.containsKey(supplyItem.getId())) {
+      final long currentQuantity = supplyItem.getQuantity();
+      supplyItem.setQuantity(currentQuantity + stock.get(supplyItem.getId()).getQuantity());
+
+      return stock.replace(supplyItem.getId(), supplyItem);
     }
-    else{
-      supplyItem.addItens(this.stock.get(supplyItem.getId()).getQuantity());
-      this.stock.replace(supplyItem.getId(),supplyItem);
-      return supplyItem;
-    }
+
+    return stock.putIfAbsent(supplyItem.getId(), supplyItem);
+    
   }
 
-  public boolean incAvailableBeds(){
-    if(this.availableBeds < this.beds) {
-      this.availableBeds++;
+  public boolean incrementAvailableBeds(){
+    if(availableBeds < beds) {
+      availableBeds++;
       return true;
     }else
       return false;
   }
 
-  public boolean decAvailableBeds(){
-    if(this.availableBeds > 0) {
-      this.availableBeds--;
+  public boolean decrementAvailableBeds(){
+    if(availableBeds > 0) {
+      availableBeds--;
       return true;
     }else
       return false;
   }
 
-  public boolean patientsMapIsNullOrEmpty() {
-    return this.patients == null || this.patients.isEmpty();
-  }
 }

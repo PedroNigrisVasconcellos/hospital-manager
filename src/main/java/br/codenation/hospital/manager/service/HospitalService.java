@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 
 @Service
 @AllArgsConstructor
@@ -50,13 +53,13 @@ public class HospitalService {
   public Patient checkinPatient(Patient patient, String hospitalId) {
     Hospital hospital = loadHospital(hospitalId);
 
-    if(!hospital.decAvailableBeds()) throw new HospitalException(String.format(NO_AVAILABLE_BEDS,hospitalId));
+    if(!hospital.decrementAvailableBeds()) throw new HospitalException(String.format(NO_AVAILABLE_BEDS,hospitalId));
 
     patient.setHospitalCheckIn(LocalDate.now());
 
     patientService.update(patient);
 
-    if(hospital.addNewPatient(patient) == null) throw new HospitalException(PATIENT_ALREADY_CHECKED_IN);
+    if(hospital.addNewPatient(patient) == null) throw new HospitalException(String.format(PATIENT_ALREADY_CHECKED_IN, patient.getId()));
 
     save(hospital);
 
@@ -66,10 +69,13 @@ public class HospitalService {
   public Patient checkoutPatient(String patientId, String hospitalId) {
     Hospital hospital = loadHospital(hospitalId);
 
-    if(!hospital.incAvailableBeds()) throw new HospitalException(String.format(INVALID_NUMBER_OF_BEDS));
+    if(!hospital.incrementAvailableBeds()) throw new HospitalException(String.format(INVALID_NUMBER_OF_BEDS));
 
-    Patient patient = hospital.removePatient(patientId);
-    if(patient == null) throw new HospitalException(String.format(PATIENT_IS_NOT_CHECKED_IN,patientId));
+    Optional<Patient> patientOptional = hospital.removePatient(patientId);
+
+    if(patientOptional.isEmpty()) throw new HospitalException(String.format(PATIENT_IS_NOT_CHECKED_IN,patientId));
+
+    Patient patient = patientOptional.get();
 
     patient.setHospitalCheckIn(null);
     patientService.update(patient);
@@ -81,7 +87,7 @@ public class HospitalService {
   public Patient findPatient(String patientId,String hospitalId){
     Hospital hospital = loadHospital(hospitalId);
 
-    if(hospital.patientsMapIsNullOrEmpty()) throw new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND, patientId));
+    if(hospital.getPatients().isEmpty()) throw new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND, patientId));
 
     Patient patient = hospital.getPatients().get(patientId);
 
@@ -89,12 +95,12 @@ public class HospitalService {
     else throw new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND, patientId));
   }
 
-  public List<Patient> findPatients(String hospitalId){
+  public Map<String, Patient> findPatients(String hospitalId){
     Hospital hospital = loadHospital(hospitalId);
 
-    if(hospital.patientsMapIsNullOrEmpty()) throw new ResourceNotFoundException(String.format(NO_PATIENTS_HAS_BEEN_FOUND));
+    if(hospital.getPatients().isEmpty()) throw new ResourceNotFoundException(String.format(NO_PATIENTS_HAS_BEEN_FOUND));
 
-    return new ArrayList<>(hospital.getPatients().values());
+    return hospital.getPatients();
   }
 
   public SupplyItem insertProduct(String hospitalId, SupplyItem product){

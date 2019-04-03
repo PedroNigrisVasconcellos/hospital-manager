@@ -14,8 +14,8 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "pacients")
-@TypeAlias("pacient")
+@Document(collection = "patients")
+@TypeAlias("patient")
 public class Patient {
   @Id private String id;
 
@@ -23,8 +23,7 @@ public class Patient {
   @NotEmpty @NotBlank @CPF private String cpf;
   @NotNull private LocalDate birthDate;
   private Gender gender;
-  @NotNull private LocalDate hospitalCheckIn;
-
+  private LocalDate hospitalCheckIn;
   @NotNull private Double latitude;
   @NotNull private Double longitude;
 

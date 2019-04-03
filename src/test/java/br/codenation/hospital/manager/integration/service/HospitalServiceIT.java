@@ -6,6 +6,7 @@ import br.codenation.hospital.manager.model.Patient;
 import br.codenation.hospital.manager.repository.HospitalRepository;
 import br.codenation.hospital.manager.repository.PatientRepository;
 import br.codenation.hospital.manager.service.HospitalService;
+import br.codenation.hospital.manager.service.PatientService;
 import helper.TestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,17 +23,21 @@ public class HospitalServiceIT {
   @Autowired private PatientRepository patientRepository;
 
   private HospitalService hospitalService;
+  private PatientService patientService;
 
   @BeforeEach
   public void setUp() {
-    hospitalService = new HospitalService(hospitalRepository, patientRepository);
+    hospitalService = new HospitalService(hospitalRepository,patientService);
+    patientService = new PatientService(patientRepository);
   }
 
   @Test
   public void saveHospital() {
     final Hospital hospital = hospitalService.save(TestHelper.newHospital());
 
-    assertEquals(hospital, hospitalService.loadHospital(hospital.getId()));
+    Hospital hp = hospitalService.loadHospital(hospital.getId());
+
+    assertEquals(hospital, hp);
   }
 
   @Test
@@ -43,14 +48,14 @@ public class HospitalServiceIT {
 
   @Test
   public void savePatient() {
-    final Patient patient = hospitalService.save(TestHelper.newPatient());
+    final Patient patient = patientService.save(TestHelper.newPatient());
 
-    assertEquals(patient, hospitalService.loadPatient(patient.getId()));
+    assertEquals(patient, patientService.loadPatient(patient.getId()));
   }
 
   @Test
   public void patientNotFound() {
     assertThrows(
-        ResourceNotFoundException.class, () -> hospitalService.loadPatient("some random value"));
+        ResourceNotFoundException.class, () -> patientService.loadPatient("some random value"));
   }
 }

@@ -2,6 +2,7 @@ package br.codenation.hospital.manager.service;
 
 import br.codenation.hospital.manager.exception.ResourceNotFoundException;
 import br.codenation.hospital.manager.model.Hospital;
+import br.codenation.hospital.manager.model.Patient;
 import br.codenation.hospital.manager.repository.HospitalRepository;
 import br.codenation.hospital.manager.repository.PatientRepository;
 import helper.TestHelper;
@@ -11,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,7 +55,18 @@ public class HospitalServiceTest {
   @Test
   public void shouldCheckinPatientWithPatientObject(){
 
-    //TODO
+    Patient patient = TestHelper.newPatient();
+    Hospital hospital = TestHelper.newHospital();
+
+
+    when(hospitalService.save(hospital)).thenReturn(hospital);
+
+    System.out.println(hospital.getId());
+
+    when(hospitalService.checkinPatient(patient, hospital.getId())).thenReturn(patient);
+
+    assertEquals(LocalDate.now(), patient.getHospitalCheckIn());
+
   }
 
 }

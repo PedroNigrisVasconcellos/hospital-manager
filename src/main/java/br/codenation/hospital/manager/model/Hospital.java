@@ -80,7 +80,7 @@ public class Hospital {
     }
 
     return stock.putIfAbsent(supplyItem.getId(), supplyItem);
-    
+
   }
 
   public boolean incrementAvailableBeds(){

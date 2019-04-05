@@ -16,4 +16,5 @@ public class SupplyItemDTO {
         this.quantity = supplyItem.getQuantity();
         this.supplyType = supplyItem.getSupplyType();
     }
+
 }

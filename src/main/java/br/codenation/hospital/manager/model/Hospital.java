@@ -83,6 +83,37 @@ public class Hospital {
 
   }
 
+  public Optional<SupplyItem> removeItemStock(SupplyItem supplyItem, Long quantity, boolean internalUse){
+
+    if (stock.containsKey(supplyItem.getId())) {
+      final long currentQuantity = stock.get(supplyItem.getId()).getQuantity();
+
+      if(internalUse) {
+        if (currentQuantity >= quantity)
+          supplyItem.setQuantity(currentQuantity - quantity);
+      }else
+        if ((currentQuantity - 4) >= quantity)
+          supplyItem.setQuantity(currentQuantity - quantity);
+
+      if((currentQuantity - quantity) > 0)
+        return Optional.ofNullable(stock.replace(supplyItem.getId(), supplyItem));
+      else
+        return Optional.ofNullable(stock.remove(supplyItem.getId()));
+    }
+
+    return Optional.ofNullable(null);
+  }
+
+  public boolean haveEnoughItems(String productId, Long quantity){
+
+    if(!stock.containsKey(productId))
+      return false;
+    else {
+      return stock.get(productId).getQuantity() >= quantity;
+    }
+
+  }
+
   public boolean incrementAvailableBeds(){
     if(availableBeds < beds) {
       availableBeds++;
@@ -98,5 +129,6 @@ public class Hospital {
     }else
       return false;
   }
+
 
 }

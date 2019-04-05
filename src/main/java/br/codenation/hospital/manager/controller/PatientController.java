@@ -82,9 +82,9 @@ public class PatientController {
   @PutMapping(value = "/{patientId}/checkin")
   public Callable<ResponseEntity<Patient>> patientCheckIn(@PathVariable("patientId") String patientId) {
     Patient patient = patientService.loadPatient(patientId);
-    Hospital nearestAvailableHospital = hospitalService.findNearestAvailableHospital(patient);
+    Optional<Hospital> nearestAvailableHospital = hospitalService.findNearestAvailableHospital(patient);
 
-    return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkinPatient(patient, nearestAvailableHospital.getId()));
+    return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkinPatient(patient, nearestAvailableHospital.get().getId()));
   }
 
   @PutMapping(value = "/{patientId}/checkout")

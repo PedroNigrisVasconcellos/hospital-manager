@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.nio.charset.CoderResult;
 import java.time.LocalDate;
 import java.util.*;
@@ -30,6 +31,7 @@ public class HospitalService {
   private static final String PATIENT_ALREADY_CHECKED_IN = "Patient %s already checked in";
   private static final String PATIENT_IS_NOT_CHECKED_IN = "Patient %s is not checked in";
   private static final String NO_AVAILABLE_BEDS = "No available beds in the hospital %s";
+  private static final String NO_AVAILABLE_ITENS = "No available items";
   private static final String INVALID_NUMBER_OF_BEDS = "Invalid number of beds";
 
   @Autowired
@@ -127,30 +129,55 @@ public class HospitalService {
 
   }
 
-  public Hospital findNearestAvailableHospital(Patient patient){
+  public Optional<Hospital> findNearestAvailableHospital(Patient patient){
 
     List<Hospital> hospitals = loadAllHospitals();
     Double patientLat = patient.getLatitude();
     Double patientLong = patient.getLongitude();
 
-    Hospital selected = null;
+    Optional<Hospital> selected = Optional.empty();
 
     for(Hospital hospital: hospitals){
 
-      if(selected == null){
-        if(hospital.getAvailableBeds() > 0) selected = hospital;
+      if(selected.isEmpty()){
+        if(hospital.getAvailableBeds() > 0) selected = Optional.ofNullable(hospital);
       }else{
         if(hospital.getAvailableBeds() > 0)
           if(Coordinates.calculateDistance(patientLat,patientLong, hospital.getLatitude(),hospital.getLongitude()) <
-             Coordinates.calculateDistance(patientLat,patientLong,selected.getLatitude(), selected.getLongitude()))
-            selected = hospital;
+             Coordinates.calculateDistance(patientLat,patientLong,selected.get().getLatitude(), selected.get().getLongitude()))
+            selected = Optional.ofNullable(hospital);
       }
     }
 
-    if(selected == null) throw new HospitalException(NO_HOSPITALS_AVAILABLE);
+    if(selected.isEmpty())throw new HospitalException(NO_HOSPITALS_AVAILABLE);
 
     return selected;
   }
+
+  public Optional<Hospital> findNearestHospitalWithItem(Hospital hospital, String productId, Long quantity){
+
+    List<Hospital> hospitals = loadAllHospitals();
+    Double hospitalLat = hospital.getLatitude();
+    Double hospitalLong = hospital.getLongitude();
+
+    Optional<Hospital> selected = Optional.empty();
+
+    for(Hospital hosp: hospitals){
+      if(selected.isEmpty()){
+        if(hosp.haveEnoughItens(productId, quantity)) selected = Optional.ofNullable(hosp);
+      }else{
+        if(hospital.haveEnoughItens(productId, quantity))
+          if (Coordinates.calculateDistance(hospitalLat, hospitalLong, hospital.getLatitude(), hospital.getLongitude()) <
+                  Coordinates.calculateDistance(hospitalLat, hospitalLong, selected.get().getLatitude(), selected.get().getLongitude()))
+            selected = Optional.ofNullable(hosp);
+        }
+
+    }
+
+    if(selected.isEmpty()) throw new HospitalException(NO_AVAILABLE_ITENS);
+
+    return selected;
+    }
 
   public Hospital findPatientInHospitals(Patient patient){
 
@@ -166,5 +193,28 @@ public class HospitalService {
        throw new HospitalException(String.format(PATIENT_IS_NOT_CHECKED_IN, patient.getId()));
 
     return hospital;
+  }
+
+  public Optional<SupplyItem> useItem(String hospitalId, String productId, Long quantity) {
+
+    Hospital hospital = loadHospital(hospitalId);
+
+    if(hospital.getStock().containsKey(productId)){
+      hospital.removeItemStock(findProduct(hospitalId,productId), quantity, true);
+      save(hospital);
+
+      return Optional.ofNullable(hospital.getStock().get(productId));
+    }else{
+      Optional<Hospital> supportHospital = findNearestHospitalWithItem(hospital, productId, quantity);
+
+      if(supportHospital.isEmpty()) throw new HospitalException(String.format(PRODUCT_NOT_FOUND, productId));
+
+      hospital = loadHospital(supportHospital.get().getId());
+
+      hospital.removeItemStock(findProduct(hospital.getId(),productId), quantity, false);
+      save(hospital);
+
+      return Optional.ofNullable(hospital.getStock().get(productId));
+    }
   }
 }

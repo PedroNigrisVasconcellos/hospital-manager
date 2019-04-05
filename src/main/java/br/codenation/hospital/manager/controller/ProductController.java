@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -38,13 +39,23 @@ public class ProductController {
                             .collect(Collectors.toList()));
   }
 
-  @GetMapping(
-          value = "/{hospitalId}/estoque/{productId}",
-          produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @GetMapping(value = "/{hospitalId}/estoque/{productId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public Callable<ResponseEntity<SupplyItemDTO>> getItem(
           @PathVariable("hospitalId") String hospitalId, @PathVariable("productId") String productId) {
     return () ->
             ResponseEntity.ok(new SupplyItemDTO(hospitalService.findProduct(hospitalId,productId)));
   }
 
+  @PutMapping(value = "/{hospitalId}/estoque/{productId}/use/{quantity}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public Callable<ResponseEntity<SupplyItemDTO>> useItem(
+          @PathVariable("hospitalId") String hospitalId, @PathVariable("productId") String productId, @PathVariable("quantity") Long quantity) {
+
+    Optional<SupplyItem> supplyItem = hospitalService.useItem(hospitalId, productId, quantity);
+
+    if (!supplyItem.isEmpty())
+      return () -> ResponseEntity.status(HttpStatus.OK).body(new SupplyItemDTO(supplyItem.get()));
+    else
+      return () -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+  }
 }

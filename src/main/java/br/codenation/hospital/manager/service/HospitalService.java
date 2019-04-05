@@ -6,15 +6,16 @@ import br.codenation.hospital.manager.model.Hospital;
 import br.codenation.hospital.manager.model.Patient;
 import br.codenation.hospital.manager.model.product.SupplyItem;
 import br.codenation.hospital.manager.repository.HospitalRepository;
+import br.codenation.hospital.manager.util.Coordinates;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.CoderResult;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -22,6 +23,7 @@ import java.util.Optional;
 public class HospitalService {
 
   private static final String HOSPITAL_NOT_FOUND = "Hospital %s not found";
+  private static final String NO_HOSPITALS_AVAILABLE = "No hospitals available";
   private static final String PATIENT_NOT_FOUND = "Patient %s not found";
   private static final String PRODUCT_NOT_FOUND = "Product %s not found";
   private static final String NO_PATIENTS_HAS_BEEN_FOUND = "No patients has been found";
@@ -125,4 +127,44 @@ public class HospitalService {
 
   }
 
+  public Hospital findNearestAvailableHospital(Patient patient){
+
+    List<Hospital> hospitals = loadAllHospitals();
+    Double patientLat = patient.getLatitude();
+    Double patientLong = patient.getLongitude();
+
+    Hospital selected = null;
+
+    for(Hospital hospital: hospitals){
+
+      if(selected == null){
+        if(hospital.getAvailableBeds() > 0) selected = hospital;
+      }else{
+        if(hospital.getAvailableBeds() > 0)
+          if(Coordinates.calculateDistance(patientLat,patientLong, hospital.getLatitude(),hospital.getLongitude()) <
+             Coordinates.calculateDistance(patientLat,patientLong,selected.getLatitude(), selected.getLongitude()))
+            selected = hospital;
+      }
+    }
+
+    if(selected == null) throw new HospitalException(NO_HOSPITALS_AVAILABLE);
+
+    return selected;
+  }
+
+  public Hospital findPatientInHospitals(Patient patient){
+
+    Hospital hospital = null;
+
+     List<Hospital> hospitals = loadAllHospitals();
+
+     for(Hospital h : hospitals)
+       if(h.getPatients().containsKey(patient.getId()))
+         hospital = h;
+
+     if(hospital == null)
+       throw new HospitalException(String.format(PATIENT_IS_NOT_CHECKED_IN, patient.getId()));
+
+    return hospital;
+  }
 }

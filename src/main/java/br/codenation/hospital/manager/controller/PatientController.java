@@ -1,6 +1,8 @@
 package br.codenation.hospital.manager.controller;
 
 import br.codenation.hospital.manager.dto.PatientDTO;
+import br.codenation.hospital.manager.exception.HospitalException;
+import br.codenation.hospital.manager.model.Hospital;
 import br.codenation.hospital.manager.model.Patient;
 import br.codenation.hospital.manager.service.HospitalService;
 import br.codenation.hospital.manager.service.PatientService;
@@ -76,4 +78,21 @@ public class PatientController {
     return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkoutPatient(patientId, hospitalId));
   }
   //TODO Same of patientCheckin().
+
+  @PutMapping(value = "/{patientId}/checkin")
+  public Callable<ResponseEntity<Patient>> patientCheckIn(@PathVariable("patientId") String patientId) {
+    Patient patient = patientService.loadPatient(patientId);
+    Hospital nearestAvailableHospital = hospitalService.findNearestAvailableHospital(patient);
+
+    return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkinPatient(patient, nearestAvailableHospital.getId()));
+  }
+
+  @PutMapping(value = "/{patientId}/checkout")
+  public Callable<ResponseEntity<Patient>> patientCheckOut(@PathVariable("patientId") String patientId) {
+    Patient patient = patientService.loadPatient(patientId);
+    Hospital hospital = hospitalService.findPatientInHospitals(patient);
+
+    return () -> ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkoutPatient(patient.getId(), hospital.getId()));
+  }
+
 }

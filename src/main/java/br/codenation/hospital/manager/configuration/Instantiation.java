@@ -33,23 +33,32 @@ public class Instantiation implements CommandLineRunner {
     hospitalRepository.deleteAll();
     patientRepository.deleteAll();
 
-     Hospital samaritanHospital =
+     Hospital realHospital =
         new Hospital(
-            "Hospital Samaritano",
-            "R. Conselheiro Brotero, 1486",
+            "Real Hospital Português de Beneficência",
+            " Av. Gov. Agamenon Magalhães, 4760 - Paissandu, Recife - PE, 52010-040",
             10L,
-            10L,
-            -23.5392135,
-            -46.66193084);
+            5L,
+            -8.0646,
+            -34.8986);
 
      Hospital morumbiHospital =
         new Hospital(
             "Hospital São Luiz Unidade Morumbi",
             "Rua Engenheiro Oscar Americano, 840 - Jardim Guedala, São Paulo - SP, 05605-050",
             5L,
-            5L,
+            1L,
             -23.59067495,
             -46.67325182);
+
+      Hospital santaCasaHospital =
+              new Hospital(
+                      "Santa Casa de Misericordia",
+                      "Av. Independência, 75 - Independência, Porto Alegre - RS, 90035-072",
+                      5L,
+                      3L,
+                      -30.0309,
+                      -51.2214);
 
      Patient paciente1 =
             new Patient("Pedro Silva",
@@ -57,8 +66,8 @@ public class Instantiation implements CommandLineRunner {
                     LocalDate.of(1992,2,14),
                     "male",
                     null,
-                    31.7654,
-                    52.3376);
+                    -31.7654,
+                    -52.3376);
 
      Patient paciente2 =
             new Patient("Lucas Santos",
@@ -66,8 +75,8 @@ public class Instantiation implements CommandLineRunner {
                     LocalDate.of(1994,5,23),
                     "male",
                     null,
-                    23.5505,
-                    46.6333);
+                    -23.5505,
+                    -46.6333);
 
      Patient paciente3 =
               new Patient("Regina Souza",
@@ -75,8 +84,8 @@ public class Instantiation implements CommandLineRunner {
                       LocalDate.of(1978,5,21),
                       "female",
                       null,
-                      32.0395,
-                      52.1014);
+                      -31.7654,
+                      -52.3376);
 
       SupplyItem seringa =
               new SupplyItem("1","Seringa",Long.valueOf(5000), SupplyType.PRODUCT);
@@ -90,16 +99,16 @@ public class Instantiation implements CommandLineRunner {
               new SupplyItem("5","Sangue O Positivo",Long.valueOf(25), SupplyType.BLOOD_BANK);
 
     patientRepository.saveAll(Arrays.asList(paciente1,paciente2,paciente3));
-    hospitalRepository.saveAll(Arrays.asList(samaritanHospital, morumbiHospital));
+    hospitalRepository.saveAll(Arrays.asList(realHospital, morumbiHospital, santaCasaHospital));
 
-    hospitalService.insertProduct(samaritanHospital.getId(),seringa);
-    hospitalService.insertProduct(samaritanHospital.getId(),seringa);
-    hospitalService.insertProduct(samaritanHospital.getId(),seringa);
-    hospitalService.insertProduct(samaritanHospital.getId(),seringa);
+    hospitalService.insertProduct(morumbiHospital.getId(),seringa);
+    hospitalService.insertProduct(morumbiHospital.getId(),gesso);
+    hospitalService.insertProduct(morumbiHospital.getId(),gaze);
+    hospitalService.insertProduct(morumbiHospital.getId(),sangueOPos);
 
-    hospitalService.insertProduct(morumbiHospital.getId(),sangueAB);
+    hospitalService.insertProduct(santaCasaHospital.getId(),sangueAB);
 
-    hospitalService.checkinPatient(patientService.loadPatient(paciente1.getId()),samaritanHospital.getId());
+    //hospitalService.checkinPatient(patientService.loadPatient(paciente1.getId()),santaCasaHospital.getId());
 
      // Banco Inicializado com 2 Hospitais, 3 pacientes e 5 Itens, sendo 3 produtos e 2 bancos de sangue//
      // No samaritanHospital, são adicinados: seringa, gerro, gaze e sangueAB, além de fazer o checkin do paciente1.

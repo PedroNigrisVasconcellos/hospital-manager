@@ -119,4 +119,15 @@ public class HospitalService {
 
   }
 
+  public Hospital findNearHospital(String hospitalId){
+    Hospital hospital = loadHospital(hospitalId);
+
+    List<Hospital> listNearHospitals = hospitalRepository.findByLocationNear(hospital.getLocation());
+
+    for (Hospital h : listNearHospitals) {
+      System.out.println(h);
+    }
+
+    return listNearHospitals.get(0);
+  }
 }

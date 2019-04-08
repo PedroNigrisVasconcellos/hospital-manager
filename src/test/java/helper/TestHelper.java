@@ -5,6 +5,7 @@ import br.codenation.hospital.manager.model.Patient;
 import br.codenation.hospital.manager.model.product.SupplyItem;
 import br.codenation.hospital.manager.model.product.SupplyType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.geo.Point;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -26,8 +27,8 @@ public final class TestHelper {
         UUID.randomUUID().toString(),
         (long) RANDOM.nextInt(100),
         (long) RANDOM.nextInt(100),
-        RANDOM.nextDouble(),
-        RANDOM.nextDouble());
+        new Point(RANDOM.nextDouble(),
+        RANDOM.nextDouble()));
   }
 
   public static Patient newPatient() {

@@ -1,21 +1,20 @@
 package br.codenation.hospital.manager.model;
 
-import br.codenation.hospital.manager.exception.HospitalException;
 import br.codenation.hospital.manager.model.product.SupplyItem;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -40,24 +39,28 @@ public class Hospital {
   private Map<String, SupplyItem> stock;
   private Map<String, Patient> patients;
 
-  @NotNull private Double latitude;
-  @NotNull private Double longitude;
+  // @NotNull private Double latitude;
+  // @NotNull private Double longitude;
+  @NotNull @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+  Point location;
 
   public Hospital(
       String name,
       String address,
       Long beds,
       Long availableBeds,
-      Double latitude,
-      Double longitude) {
+      // Double latitude,
+      // Double longitude,
+      Point location) {
     this.name = name;
     this.address = address;
     this.beds = beds;
     this.availableBeds = availableBeds;
-    this.latitude = latitude;
-    this.longitude = longitude;
+    // this.latitude = latitude;
+    // this.longitude = longitude;
     this.patients = new HashMap<>();
     this.stock = new HashMap<>();
+    this.location = location;
   }
 
   public Patient addNewPatient(Patient patient) {

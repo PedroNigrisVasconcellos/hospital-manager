@@ -11,11 +11,10 @@ import br.codenation.hospital.manager.service.PatientService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.geo.Point;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
 
 @Configuration
 @AllArgsConstructor
@@ -39,8 +38,8 @@ public class Instantiation implements CommandLineRunner {
             "R. Conselheiro Brotero, 1486",
             10L,
             10L,
-            -23.5392135,
-            -46.66193084);
+            new Point(-23.5392135, -46.66193084)
+        );
 
      Hospital morumbiHospital =
         new Hospital(
@@ -48,8 +47,8 @@ public class Instantiation implements CommandLineRunner {
             "Rua Engenheiro Oscar Americano, 840 - Jardim Guedala, São Paulo - SP, 05605-050",
             5L,
             5L,
-            -23.59067495,
-            -46.67325182);
+            new Point(-23.59067495, -46.67325182)
+        );
 
      Patient paciente1 =
             new Patient("Pedro Silva",

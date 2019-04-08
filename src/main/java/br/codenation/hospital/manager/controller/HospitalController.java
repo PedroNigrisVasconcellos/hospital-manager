@@ -46,4 +46,11 @@ public class HospitalController {
     return () -> ResponseEntity.ok(hospitalService.loadHospital(hospitalId).getAvailableBeds());
   }
 
+  @GetMapping(
+      value = "/{hospitalId}/nearHospital",
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public Callable<ResponseEntity<Hospital>> getNearHospital(
+      @PathVariable("hospitalId") String hospitalId) {
+    return () -> ResponseEntity.ok(hospitalService.findNearHospital(hospitalId));
+  }
 }

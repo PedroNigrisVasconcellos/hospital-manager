@@ -31,7 +31,7 @@ public class HospitalService {
   private static final String PATIENT_ALREADY_CHECKED_IN = "Patient %s already checked in";
   private static final String PATIENT_IS_NOT_CHECKED_IN = "Patient %s is not checked in";
   private static final String NO_AVAILABLE_BEDS = "No available beds in the hospital %s";
-  private static final String NO_AVAILABLE_ITENS = "No available items";
+  private static final String NO_AVAILABLE_ITEMS = "No available items";
   private static final String INVALID_NUMBER_OF_BEDS = "Invalid number of beds";
 
   @Autowired
@@ -164,9 +164,9 @@ public class HospitalService {
 
     for(Hospital hosp: hospitals){
       if(selected.isEmpty()){
-        if(hosp.haveEnoughItens(productId, quantity)) selected = Optional.ofNullable(hosp);
+        if(hosp.haveEnoughItems(productId, quantity)) selected = Optional.ofNullable(hosp);
       }else{
-        if(hospital.haveEnoughItens(productId, quantity))
+        if(hospital.haveEnoughItems(productId, quantity))
           if (Coordinates.calculateDistance(hospitalLat, hospitalLong, hospital.getLatitude(), hospital.getLongitude()) <
                   Coordinates.calculateDistance(hospitalLat, hospitalLong, selected.get().getLatitude(), selected.get().getLongitude()))
             selected = Optional.ofNullable(hosp);
@@ -174,7 +174,7 @@ public class HospitalService {
 
     }
 
-    if(selected.isEmpty()) throw new HospitalException(NO_AVAILABLE_ITENS);
+    if(selected.isEmpty()) throw new HospitalException(NO_AVAILABLE_ITEMS);
 
     return selected;
     }

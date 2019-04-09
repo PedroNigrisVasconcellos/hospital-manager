@@ -136,4 +136,25 @@ public class HospitalControllerTest {
         .andExpect(jsonPath("$.stock", is(hospital.getStock())))
         .andExpect(jsonPath("$.patients", is(hospital.getPatients())));
   }
+
+  @Test
+  public void shouldAvailableBedsCount() throws Exception {
+
+    final Hospital hospital = TestHelper.newHospital();
+
+    when(hospitalService.loadHospital(eq(hospitalId))).thenReturn(hospital);
+
+    final MvcResult mvcResult =
+        mockMvc
+            .perform(
+                get(BASE_PATH + "/" + hospitalId + "/leitos")
+                    .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(request().asyncStarted())
+            .andReturn();
+
+    mockMvc
+        .perform(asyncDispatch(mvcResult))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", is(hospital.getAvailableBeds().intValue())));
+  }
 }

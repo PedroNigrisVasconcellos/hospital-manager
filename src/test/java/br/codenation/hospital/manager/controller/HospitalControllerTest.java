@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
@@ -64,6 +65,37 @@ public class HospitalControllerTest {
             .andReturn();
 
     mockMvc.perform(asyncDispatch(mvcResult)).andExpect(status().isCreated());
+  }
+
+  @Test
+  public void shouldBadRequestCreateHospital() throws Exception {
+    mockMvc
+        .perform(
+            post(BASE_PATH)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(status().isBadRequest())
+        .andReturn();
+  }
+
+  @Test
+  public void shouldUnprocessableEntityCreateHospital() throws Exception {
+
+    Hospital hospital = TestHelper.newHospital();
+    hospital.setName(null);
+
+    mockMvc
+        .perform(
+            post(BASE_PATH)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(TestHelper.getMapper().writeValueAsString(hospital))
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(status().isUnprocessableEntity())
+        .andExpect(jsonPath("$.message", is("validation error")))
+        .andExpect(jsonPath("$.errors", hasSize(2)))
+        .andExpect(jsonPath("$.errors[0].fieldName", is("name")))
+        .andExpect(jsonPath("$.errors[1].fieldName", is("name")))
+        .andReturn();
   }
 
   @Test

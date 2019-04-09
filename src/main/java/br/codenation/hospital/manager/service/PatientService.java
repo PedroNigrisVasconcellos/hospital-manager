@@ -42,13 +42,6 @@ public class PatientService {
             patientRepository.save(updated); },
                 () -> new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND,patientUpdated.getId())));
 
-//        if(patient.isPresent()){
-//            Patient updated = patient.get();
-//
-//            return updated;
-//        }else
-//            throw new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND,patientUpdated.getId()));
-
     }
 
 }

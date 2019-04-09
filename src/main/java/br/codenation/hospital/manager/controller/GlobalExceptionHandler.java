@@ -22,4 +22,6 @@ public class GlobalExceptionHandler {
     LOGGER.error("Exception - ResourceNotFound (404).", throwable);
     return new ResponseError(throwable);
   }
+
+
 }

@@ -5,6 +5,8 @@ import br.codenation.hospital.manager.model.Patient;
 import br.codenation.hospital.manager.model.product.SupplyItem;
 import br.codenation.hospital.manager.model.product.SupplyType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -51,6 +53,8 @@ public final class TestHelper {
   }
 
   public static ObjectMapper getMapper() {
+    MAPPER.registerModule(new JavaTimeModule());
+    MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     return MAPPER;
   }
 }

@@ -122,7 +122,10 @@ public class HospitalControllerTest {
 
     final MvcResult mvcResult =
         mockMvc
-            .perform(get(BASE_PATH + "/" + hospitalId).contentType(MediaType.APPLICATION_JSON_UTF8))
+            .perform(
+                get(BASE_PATH + "/" + hospitalId)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .accept(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(request().asyncStarted())
             .andReturn();
 
@@ -132,9 +135,7 @@ public class HospitalControllerTest {
         .andExpect(jsonPath("$.name", is(hospital.getName())))
         .andExpect(jsonPath("$.address", is(hospital.getAddress())))
         .andExpect(jsonPath("$.beds", is(hospital.getBeds().intValue())))
-        .andExpect(jsonPath("$.availableBeds", is(hospital.getAvailableBeds().intValue())))
-        .andExpect(jsonPath("$.stock", is(hospital.getStock())))
-        .andExpect(jsonPath("$.patients", is(hospital.getPatients())));
+        .andExpect(jsonPath("$.availableBeds", is(hospital.getAvailableBeds().intValue())));
   }
 
   @Test

@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -150,5 +152,47 @@ public class PatientControllerTest {
             .readValue(mvcResult.getResponse().getContentAsString(), Patient.class);
 
     assertEquals(patient.getFullName(), patientFound.getFullName());
+  }
+
+  @Test
+  public void shouldGetHospitalPatientsName() throws Exception {
+
+    Patient patient = TestHelper.newPatient();
+    Map<String, Patient> patients = new HashMap<>();
+    patients.put(patient.getId(), patient);
+
+    when(hospitalService.findPatients(eq(hospitalId))).thenReturn(patients);
+
+    final MvcResult mvcResult =
+        mockMvc
+            .perform(
+                get(String.format("%s/%s/pacientes", BASE_PATH, hospitalId))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .accept(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(request().asyncStarted())
+            .andReturn();
+
+    mockMvc
+        .perform(asyncDispatch(mvcResult))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0]", is(patient.getFullName())));
+  }
+
+  @Test
+  public void shouldGetHospitalPatientsNotFound() throws Exception {
+    when(hospitalService.findPatients(eq(hospitalId)))
+        .thenThrow(new ResourceNotFoundException("mock-exception"));
+
+    final MvcResult mvcResult =
+        mockMvc
+            .perform(
+                get(String.format("%s/%s/pacientes", BASE_PATH, hospitalId))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .accept(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(request().asyncStarted())
+            .andReturn();
+
+    mockMvc.perform(asyncDispatch(mvcResult)).andExpect(status().isNotFound());
   }
 }
